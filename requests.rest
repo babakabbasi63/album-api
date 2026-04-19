@@ -1,0 +1,80 @@
+### ── Register a user ─────────────────────────────────────────────
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "babak",
+  "email": "babak@example.com",
+  "password": "password123",
+  "passwordConfirm": "password123"
+}
+
+###
+
+### ── Login ───────────────────────────────────────────────────────
+### after login the session cookie is saved automatically
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "babak@example.com",
+  "password": "password123"
+}
+
+###
+
+### ── Logout ──────────────────────────────────────────────────────
+POST http://localhost:3000/api/auth/logout
+
+###
+
+### ── Public: get all albums (no login needed) ────────────────────
+GET http://localhost:3000/api/albums
+
+###
+
+### ── Create album (must be logged in) ───────────────────────────
+POST http://localhost:3000/api/albums
+Content-Type: application/json
+
+{
+  "title": "Dark Side of the Moon",
+  "artist": "Pink Floyd",
+  "year": 1973,
+  "trackCount": 10,
+  "genre": "Rock"
+}
+
+###
+
+### ── Create album without login (should fail 401) ────────────────
+### logout first then try this
+POST http://localhost:3000/api/albums
+Content-Type: application/json
+
+{
+  "title": "Unauthorized Album",
+  "artist": "No User",
+  "year": 2020,
+  "trackCount": 5,
+  "genre": "Pop"
+}
+
+###
+
+### ── Update album (must be logged in, replace id) ────────────────
+PUT http://localhost:3000/api/albums/69dba2601bb77fb19090a78e
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "artist": "Pink Floyd",
+  "year": 1973,
+  "trackCount": 10,
+  "genre": "Rock"
+}
+
+###
+
+### ── Delete album (must be logged in, replace id) ────────────────
+DELETE http://localhost:3000/api/albums/69dba2601bb77fb19090a78e

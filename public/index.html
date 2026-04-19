@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Album Collection</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 30px 20px;
+    }
+
+    h1 { font-size: 24px; margin-bottom: 20px; color: #222; }
+
+    h2 {
+      font-size: 16px;
+      color: #555;
+      margin: 20px 0 10px 0;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 5px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    label { font-weight: bold; font-size: 14px; }
+
+    select, input {
+      padding: 7px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      padding: 7px 14px;
+      font-size: 14px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-apply { background: #4CAF50; color: white; }
+    .btn-apply:hover { background: #45a049; }
+    .btn-reset { background: #888; color: white; }
+    .btn-reset:hover { background: #666; }
+    .btn-delete { background: #e53935; color: white; padding: 5px 12px; font-size: 13px; }
+    .btn-delete:hover { background: #c62828; }
+
+    .count { font-size: 14px; color: #666; margin: 10px 0; }
+
+    .album-list { display: flex; flex-direction: column; }
+
+    .album-card {
+      background: white;
+      border-bottom: 1px solid #e0e0e0;
+      padding: 16px 20px;
+    }
+
+    .album-card:first-child { border-radius: 8px 8px 0 0; }
+    .album-card:last-child { border-radius: 0 0 8px 8px; border-bottom: none; }
+    .album-card:only-child { border-radius: 8px; }
+
+    .album-title { font-size: 17px; font-weight: bold; color: #222; margin-bottom: 6px; }
+    .album-artist { font-size: 14px; color: #555; margin-bottom: 4px; }
+    .album-artist span { color: #1a73e8; }
+    .album-meta { font-size: 13px; color: #555; margin-bottom: 10px; }
+    .album-meta span { color: #1a73e8; }
+
+    .no-results {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      color: #888;
+      text-align: center;
+    }
+
+    .error { color: red; padding: 10px; }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .checkbox-group label {
+      font-weight: normal;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Album Collection</h1>
+
+  <!-- ── TASK 1: Sorting ── -->
+  <h2>Task 1 - Sorting</h2>
+  <div class="controls">
+    <label>Sort by:</label>
+    <select id="sortField">
+      <option value="title">Title (A-Z)</option>
+      <option value="-title">Title (Z-A)</option>
+      <option value="year">Year (Oldest first)</option>
+      <option value="-year">Year (Newest first)</option>
+      <option value="artist">Artist (A-Z)</option>
+      <option value="-artist">Artist (Z-A)</option>
+    </select>
+  </div>
+
+  <!-- ── TASK 2: Numeric filtering ── -->
+  <h2>Task 2 - Numeric Filter</h2>
+  <div class="controls">
+    <label>Numeric Filter:</label>
+    <input type="text" id="numericFilter"
+      placeholder="e.g. year>1980" style="width:200px">
+    <span style="font-size:13px; color:#888;">
+      Examples: year&gt;1980 | year&lt;1990 | year&gt;1970,year&lt;1985
+    </span>
+  </div>
+
+  <!-- ── TASK 3: Field selection ── -->
+  <h2>Task 3 - Field Selection</h2>
+  <div class="controls">
+    <label>Show fields:</label>
+    <div class="checkbox-group">
+      <label><input type="checkbox" value="artist" checked> Artist</label>
+      <label><input type="checkbox" value="title" checked> Title</label>
+      <label><input type="checkbox" value="year" checked> Year</label>
+      <label><input type="checkbox" value="genre" checked> Genre</label>
+      <label><input type="checkbox" value="trackCount" checked> Tracks</label>
+    </div>
+  </div>
+
+  <!-- ── TASK 4: Search ── -->
+  <h2>Task 4 - Search</h2>
+  <div class="controls">
+    <label>Search:</label>
+    <input type="text" id="searchInput"
+      placeholder="e.g. pink, blue, wall" style="width:200px">
+    <span style="font-size:13px; color:#888;">
+      Searches both artist name and album title
+    </span>
+  </div>
+
+  <!-- ── TASK 5: Year range ── -->
+  <h2>Task 5 - Year Range Filter</h2>
+  <div class="controls">
+    <label>Start Year:</label>
+    <input type="number" id="startYear"
+      placeholder="e.g. 1970" style="width:110px">
+    <label>End Year:</label>
+    <input type="number" id="endYear"
+      placeholder="e.g. 1990" style="width:110px">
+    <span style="font-size:13px; color:#888;">
+      Filter albums released between two years
+    </span>
+  </div>
+
+  <div class="controls">
+    <button class="btn-apply" onclick="loadAlbums()">Apply Filters</button>
+    <button class="btn-reset" onclick="resetFilters()">Reset</button>
+  </div>
+
+  <div class="count" id="resultCount"></div>
+
+  <div class="album-list" id="albumList">
+    <div class="no-results">Loading...</div>
+  </div>
+
+  <script>
+    async function loadAlbums() {
+      const sort          = document.getElementById('sortField').value
+      const numericFilter = document.getElementById('numericFilter').value
+      const searchInput   = document.getElementById('searchInput').value
+      const startYear     = document.getElementById('startYear').value
+      const endYear       = document.getElementById('endYear').value
+      const listDiv       = document.getElementById('albumList')
+      const countDiv      = document.getElementById('resultCount')
+
+      // task 3 - get checked fields
+      const checkedFields = [...document.querySelectorAll('.checkbox-group input:checked')]
+        .map(cb => cb.value)
+
+      // build query string
+      let query = `?sort=${sort}`
+      if (numericFilter)            query += `&numericFilters=${numericFilter}`
+      if (checkedFields.length > 0) query += `&fields=${checkedFields.join(',')}`
+      if (searchInput)              query += `&search=${searchInput}`
+      if (startYear)                query += `&startYear=${startYear}`
+      if (endYear)                  query += `&endYear=${endYear}`
+
+      try {
+        const response = await fetch(`/api/albums${query}`)
+        const data = await response.json()
+
+        countDiv.textContent = `Albums (${data.albums.length})`
+        listDiv.innerHTML = ''
+
+        if (data.albums.length === 0) {
+          listDiv.innerHTML = '<div class="no-results">No albums found</div>'
+          return
+        }
+
+        data.albums.forEach(album => {
+          const card = document.createElement('div')
+          card.className = 'album-card'
+          card.innerHTML = `
+            <div class="album-title">${album.title || '-'}</div>
+            <div class="album-artist">Artist: <span>${album.artist || '-'}</span></div>
+            <div class="album-meta">
+              Year: <span>${album.year || '-'}</span> |
+              Genre: <span>${album.genre || '-'}</span> |
+              Tracks: <span>${album.trackCount || '-'}</span>
+            </div>
+            <button class="btn-delete" onclick="deleteAlbum('${album._id}')">Delete</button>
+          `
+          listDiv.appendChild(card)
+        })
+
+      } catch (error) {
+        listDiv.innerHTML = '<div class="error">Error loading albums</div>'
+      }
+    }
+
+    async function deleteAlbum(id) {
+      if (!confirm('Are you sure you want to delete this album?')) return
+      try {
+        await fetch(`/api/albums/${id}`, { method: 'DELETE' })
+        loadAlbums()
+      } catch (error) {
+        alert('Error deleting album')
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('sortField').value     = 'title'
+      document.getElementById('numericFilter').value = ''
+      document.getElementById('searchInput').value   = ''
+      document.getElementById('startYear').value     = ''
+      document.getElementById('endYear').value       = ''
+      document.querySelectorAll('.checkbox-group input').forEach(cb => cb.checked = true)
+      loadAlbums()
+    }
+
+    loadAlbums()
+  </script>
+
+</body>
+</html>

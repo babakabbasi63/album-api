@@ -1,0 +1,23 @@
+[
+    {
+      "title": "Dark Side of the Moon",
+      "artist": "Pink Floyd",
+      "year": 1973,
+      "trackCount": 10,
+      "genre": "Rock"
+    },
+    {
+      "title": "Thriller",
+      "artist": "Michael Jackson",
+      "year": 1982,
+      "trackCount": 9,
+      "genre": "Pop"
+    },
+    {
+      "title": "Kind of Blue",
+      "artist": "Miles Davis",
+      "year": 1959,
+      "trackCount": 5,
+      "genre": "Jazz"
+    }
+  ]
